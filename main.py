@@ -19,8 +19,8 @@ def get_db():
     finally:
         db.close()
 
-# Ruta para eliminar un usuario
-@app.post("/users/{user_id}/delete", response_class=HTMLResponse)
+# Ruta para eliminar un usuario (usando DELETE)
+@app.delete("/users/{user_id}/delete", response_class=HTMLResponse)
 def delete_user(user_id: int, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.id == user_id).first()
     if not user:
@@ -91,6 +91,7 @@ def create_user(
 def read_form(request: Request, db: Session = Depends(get_db)):
     users = db.query(models.User).all()
     return templates.TemplateResponse("form.html", {"request": request, "users": users})
+
 
 
 

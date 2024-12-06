@@ -100,7 +100,6 @@
             margin-bottom: 5px;
         }
 
-        /* Estilo para el modal */
         .modal {
             display: none;
             position: fixed;
@@ -152,22 +151,14 @@
             <button type="submit">Submit</button>
         </form>
 
-        <!-- Mostrar mensajes -->
-        {% if message %}
-        <div id="message" data-message="{{ message }}"></div>
-        {% endif %}
-        {% if error %}
-        <div id="error" data-message="{{ error }}"></div>
-        {% endif %}
-
         <!-- Lista de usuarios -->
         <h2>Users</h2>
         <ul>
             {% for user in users %}
             <li>
                 {{ user.name }} ({{ user.email }}) - Age: {{ user.age }}
-                <!-- Formulario para eliminar usuario -->
-                <form method="post" action="/users/{{ user.id }}/delete" style="display:inline;">
+                <!-- Botón para eliminar usuario -->
+                <form id="deleteForm-{{ user.id }}" onsubmit="return deleteUser(event, {{ user.id }})" style="display:inline;">
                     <button type="submit" title="Delete user" style="background:none;border:none;cursor:pointer;">
                         🗑️
                     </button>
@@ -186,7 +177,20 @@
     </div>
 
     <script>
-        // Extraer el mensaje de los elementos con id 'message' y 'error'
+        async function deleteUser(event, userId) {
+            event.preventDefault(); // Previene el envío estándar del formulario.
+            const response = await fetch(`/users/${userId}/delete`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                location.reload(); // Recarga la página si la eliminación es exitosa.
+            } else {
+                alert("Error al eliminar el usuario");
+            }
+        }
+
+        // Modal de mensajes
         const message = document.getElementById('message') ? document.getElementById('message').dataset.message : null;
         const error = document.getElementById('error') ? document.getElementById('error').dataset.message : null;
 
@@ -211,6 +215,7 @@
     </script>
 </body>
 </html>
+
 
 
 
